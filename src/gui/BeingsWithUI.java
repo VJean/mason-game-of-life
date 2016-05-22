@@ -43,14 +43,12 @@ public class BeingsWithUI extends GUIState {
         gridPortrayal.setPortrayalForClass(Cell.class, getCellPortrayal());
 
         display.reset();
-        display.setBackdrop(Color.GREEN);
+        display.setBackdrop(Color.BLACK);
         display.repaint();
     }
 
-    private OvalPortrayal2D getCellPortrayal() {
-        OvalPortrayal2D r = new OvalPortrayal2D();
-        r.paint = Color.BLACK;
-        r.filled = true;
+    private CellPortrayal2D getCellPortrayal() {
+        CellPortrayal2D r = new CellPortrayal2D();
 
         return r;
     }
