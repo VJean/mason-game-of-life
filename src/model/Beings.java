@@ -1,5 +1,6 @@
 package model;
 
+import javafx.scene.control.Control;
 import sim.engine.SimState;
 import sim.engine.Stoppable;
 import sim.field.grid.ObjectGrid2D;
@@ -8,7 +9,7 @@ import sim.util.Int2D;
 public class Beings extends SimState {
     private static int GRID_SIZE = 100;
 
-    private ObjectGrid2D grid = new ObjectGrid2D(GRID_SIZE, GRID_SIZE);
+    private ObjectGrid2D grid = new ObjectGrid2D(Config.GRID_SIZE_W, Config.GRID_SIZE_H);
 
     public Beings(long seed) {
         super(seed);
@@ -20,14 +21,16 @@ public class Beings extends SimState {
         System.out.println("Simulation started");
         super.start();
         grid.clear();
+        Config.load();
         setNumLiveCells(0);
         addCells();
     }
 
-    private void addCells() {
 
-        for (int i = 0; i < GRID_SIZE; i++) {
-            for (int j = 0; j < GRID_SIZE; j++) {
+
+    private void addCells() {
+        for (int i = 0; i < Config.GRID_SIZE_W; i++) {
+            for (int j = 0; j < Config.GRID_SIZE_H; j++) {
                 Int2D location = new Int2D(i, j);
 
                 Cell cell = new Cell(location, CellState.DEAD);
@@ -39,6 +42,11 @@ public class Beings extends SimState {
                 grid.set(cell.getLocation().getX(), cell.getLocation().getY(), cell);
             }
         }
+
+        for (Int2D loc: Config.liveCellsAtStart) {
+            ((Cell) grid.get(loc.x, loc.y)).setState(CellState.ALIVE);
+        }
+        incrementLiveCells(Config.liveCellsAtStart.size());
     }
 
     public int getNumLiveCells() {
@@ -47,6 +55,34 @@ public class Beings extends SimState {
 
     public void setNumLiveCells(int numLiveCells) {
         this.numLiveCells = numLiveCells;
+    }
+
+    public int incrementLiveCells(int nb) {
+        if (nb <= 0)
+            return numLiveCells;
+
+        numLiveCells += nb;
+
+        return numLiveCells;
+    }
+
+    public int incrementLiveCells() {
+        return incrementLiveCells(1);
+    }
+
+    public int decrementLiveCells(int nb) {
+        if (nb <= 0)
+            return numLiveCells;
+        if (nb >= numLiveCells)
+            numLiveCells = 0;
+
+        numLiveCells -= nb;
+
+        return numLiveCells;
+    }
+
+    public int decrementLiveCells() {
+        return decrementLiveCells(1);
     }
 
     public ObjectGrid2D getGrid() {
